@@ -9,11 +9,14 @@ export const createUser = (req, res) => {
   console.log(newUser);
 
   if (newUser.some((value) => !value)) {
-    return res.send("value dutuu bn");
+    return res.status(200).json({
+      success: true,
+      message: "Value is not full!",
+    });
   } else {
     users.push(req.body);
     fs.writeFileSync("src/db/users.json", JSON.stringify(users));
-    
+
     return res.send({ newUser: req.body });
   }
 };
