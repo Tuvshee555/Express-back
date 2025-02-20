@@ -1,39 +1,18 @@
-import fs from "fs";
 import bcrypt from "bcrypt";
+import { Users } from "../modules/comment.model.js";
+import fs from "fs";
 
 export const createUser = async (req, res) => {
-  const rawUserData = fs.readFileSync("src/db/users.json");
-  const users = JSON.parse(rawUserData);
+  const {name} = req.body
+  try {
 
-  const { firstName, lastName, username, password, age } = req.body;
-  const newUser = [firstName, lastName, username, password, age];
+    const users = await Users.create({
+      name: name
+    })
+    res.send(users)
 
-  console.log(newUser);
-
-  if (newUser.some((value) => !value)) {
-    return res.status(400).json({
-      success: false,
-      message: "All fields are required!",
-    });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).json({ success: false, message: "Error creating user" });
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10); // 10 = salt rounds
-
-  const userToSave = {
-    firstName,
-    lastName,
-    username,
-    password: hashedPassword,
-    age,
-  };
-
-  users.push(userToSave);
-
-  fs.writeFileSync("src/db/users.json", JSON.stringify(users, null, 2));
-
-  return res.status(201).json({
-    success: true,
-    message: "User created successfully!",
-    user: { firstName, lastName, username, age, password}, // Don't return the password!
-  });
 };

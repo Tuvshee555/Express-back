@@ -1,11 +1,14 @@
 import fs from "fs";
+import { Users } from "../modules/comment.model.js";
 
-export const editUser = (req, res) => {
-  const rawUSerdata = fs.readFileSync("src/db/users.json");
-  const users = JSON.parse(rawUSerdata);
+export const editUser = async (req, res) => {
+  const { id } = req.body;
+  try{
+    await Users.updateOne({_id: id}, {name: "ee"})
 
-  const { datas } = req.body;
-  console.log(req.body);
+  }catch(error){
+    res.send(error)
+  }
 
   // const filteredPerson = users.filter((value) => value.username ===  )
 };
